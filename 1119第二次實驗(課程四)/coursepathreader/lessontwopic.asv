@@ -1,0 +1,21 @@
+clc;
+clear;
+pic=imread('drawline.png');
+pic=rgb2gray(pic);
+width=size(pic,2); %?取?像?
+lenght=size(imread('drawline.png'),1); %?取?像?
+
+figure,imshow(pic)
+
+for i=1:1:lenght
+    for j=1:1:width
+        if(pic(i,j)==0)
+       picf(i,j)=1; 
+        else
+         picf(i,j)=0;
+            
+        end
+    end
+end
+figure,imshow(picf);
+imwrite(picf,)
