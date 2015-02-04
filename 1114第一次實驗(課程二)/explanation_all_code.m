@@ -1,3 +1,4 @@
+%圓
 %產出point檔
 clc;
 clear;
@@ -35,8 +36,9 @@ for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
        y_barycentre=y1-mean(y1);     %求出所有y座標的平均值，找出重心，所有y點減去重心，讓重心點在(0,0)
        %subplot(1,length(allFile),k),plot(y_barycentre,-x_barycentre,'x'),axis equal,axis tight   %將所有圖中心點移置重心，做位置正規化
        x_size=x_barycentre/mx;       %將所有位置正規化的x座標大小正規化，所有點座標除去最遠距離  
-       y_size=y_barycentre/mx;       %將所有位置正規化的y座標大小正規化，所有點座標除去最遠距離 
-       subplot(1,length(allFile),k),plot(y_size,-x_size,'x'),axis equal,axis tight ,plot(x1(xi),y1(xi),x1(nn),y1(nn),'--')    %將所有點除去最遠距離，做大小正規化   
+       y_size=y_barycentre/mx;       %將所有位置正規化的y座標大小正規化，所有點座標除去最遠距離     
+       %subplot(1,length(allFile),k),plot(y_size,-x_size,'x'),axis equal,axis tight;     %將所有點除去最遠距離，做大小正規化 
+       subplot(3,3,k),plot(y_size,-x_size,'x'),axis equal,axis tight   %將所有點除去最遠距離，做大小正規化  
        %subplot(1,length(allFile),k),plot(x1(xi),y1(xi),x1(nn),y1(nn),'--');
        sx=[x_size,y_size];
        fnMat = allFile(k).name;    
@@ -70,11 +72,11 @@ for i=1:1:length(allPoint)
             rtmap(data(j,1),data(j,2))=rtmap(data(j,1),data(j,2))+1;
         end      
     end
-    %figure,imshow(rtmap);     %印出在二進位圖 
+    figure,imshow(rtmap);     %印出在二進位圖 
     fmapq{i}=abs(fft2(rtmap));
     %figure,imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
     fmapq{i}= fmapq{i}/ fmapq{i}(1,1);
-    %figure,imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
+    %figure,imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');%畫出頻譜
     fmapq{i}(1,1)=0;
     fclose(fid);
 end
@@ -82,17 +84,19 @@ end
 originpic=9;%原圖
 
 
-%for picnum=1:1:originpic-1
-%       sum=0;
-%    for i=1:1:size(rtmap,1)
-%        for j=1:1:size(rtmap,2)
-%            Disp2o=sqrt((fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j))* (fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j)));
-%            sum=Disp2o+sum;
-%        end
-%    end
-%    fftdist(1,picnum)=sum;
-%end
-%fftdistsmaller=fftdist/1000
+for picnum=1:1:originpic-1
+       sum=0;
+    for i=1:1:size(rtmap,1)
+        for j=1:1:size(rtmap,2)
+            Disp2o=sqrt((fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j))* (fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j)));
+            sum=Disp2o+sum;
+        end
+    end
+    fftdist(1,picnum)=sum;
+    subplot(3,3,picnum),imshow(abs(log(abs(fftshift(fmapq{picnum})))),[],'notruesize'),title('fft2');
+end
+    subplot(3,3,9),imshow(abs(log(abs(fftshift(fmapq{9})))),[],'notruesize'),title('fft2');
+fftdistsmaller=fftdist/1000
 toc
 
 

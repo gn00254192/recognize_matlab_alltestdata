@@ -30,6 +30,7 @@ for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
        x_size=x_barycentre/mx;       %將所有位置正規化的x座標大小正規化，所有點座標除去最遠距離  
        y_size=y_barycentre/mx;       %將所有位置正規化的y座標大小正規化，所有點座標除去最遠距離 
        %subplot(1,length(allFile),k),plot(y_size,-x_size,'x'),axis equal,axis tight     %將所有點除去最遠距離，做大小正規化   
+       subplot(3,3,k),plot(y_size,-x_size,'x'),axis equal,axis tight   %將所有點除去最遠距離，做大小正規化   
        sx=[x_size,y_size];
        fnMat = allFile(k).name;    
        %open link file
@@ -71,7 +72,7 @@ for i=1:1:length(allPoint)
     fclose(fid);
 end
 originpic=8;%原圖
-
+figure,
 for picnum=1:1:originpic-1
        sum=0;
     for i=1:1:size(rtmap,1)
@@ -81,8 +82,10 @@ for picnum=1:1:originpic-1
         end
     end
     fftdist(1,picnum)=sum;
+    subplot(3,3,picnum),imshow(abs(log(abs(fftshift(fmapq{picnum})))),[],'notruesize'),title('fft2');
 end
-fftdistsmaller=fftdist/max(max(fftdist))
+    subplot(3,3,8),imshow(abs(log(abs(fftshift(fmapq{8})))),[],'notruesize'),title('fft2');
+fftdistsmaller=fftdist/10000
 
 
 

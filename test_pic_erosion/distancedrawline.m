@@ -1,4 +1,3 @@
-%
 %產出point檔
 clc;
 clear;
@@ -19,15 +18,15 @@ for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
             distance=1:1:length(x);                %不做取點動作
             x1=x(floor(distance));                 %紀錄取完300點的x座標
             y1=y(floor(distance));                 %紀錄取完300點的y座標
-            xj=1;
        for xi=1:1:length(x1)                       %x座標跟y座標所有點減去x(1)及y(1)每個算出距離後，找出最大值
             
             [xs,n]=max(sqrt((x1-x1(xi)).*(x1-x1(xi))+(y1-y1(xi)).*(y1-y1(xi))));   %找出兩點之間最大距離
+            dis=sqrt((x1-x1(xi)).*(x1-x1(xi))+(y1-y1(xi)).*(y1-y1(xi)));      %把每次算完的紀錄在dis裡          
             if xs>mx            %當有算出數值比較大時，記錄下來
                 mx=xs;          %最新距離給mx，讓他可以繼續跟下一個比較  
-                dis=sqrt((x1-x1(xi)).*(x1-x1(xi))+(y1-y1(xi)).*(y1-y1(xi)));
-                [xss,nn]=max(dis);
-                dist(1,1)=xi;
+                distxi=xi;      %當刷新最遠距離時，紀錄所有點減去哪個點得到最遠距離
+                distf=dis;      %把每次算完的紀錄在dis裡,並把dis裡的資料丟給distf
+                [xss,nn]=max(distf); %求出最大值,並找出最大值的索引,以便畫出線
             end
             
        end
@@ -36,8 +35,9 @@ for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
        y_barycentre=y1-mean(y1);     %求出所有y座標的平均值，找出重心，所有y點減去重心，讓重心點在(0,0)
        %subplot(1,length(allFile),k),plot(y_barycentre,-x_barycentre,'x'),axis equal,axis tight   %將所有圖中心點移置重心，做位置正規化
        x_size=x_barycentre/mx;       %將所有位置正規化的x座標大小正規化，所有點座標除去最遠距離  
-       y_size=y_barycentre/mx;       %將所有位置正規化的y座標大小正規化，所有點座標除去最遠距離     
-       subplot(1,length(allFile),k),plot(y_size,-x_size,'x'),axis equal,axis tight;     %將所有點除去最遠距離，做大小正規化   
+       y_size=y_barycentre/mx;       %將所有位置正規化的y座標大小正規化，所有點座標除去最遠距離 
+       subplot(1,length(allFile),k),plot(y_size,-x_size,'x'),axis equal,axis tight     %將所有點除去最遠距離，做大小正規化   
+       line([y_size(distxi),y_size(nn)],[-x_size(distxi),-x_size(nn)], 'color', 'r');
        %subplot(1,length(allFile),k),plot(x1(xi),y1(xi),x1(nn),y1(nn),'--');
        sx=[x_size,y_size];
        fnMat = allFile(k).name;    
@@ -53,47 +53,3 @@ for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
          cd ..;        
     end    
 end
-%做2維傅立葉
-allPoint = dir('*.point');
-for i=1:1:length(allPoint)
-    fid=fopen(allPoint(i).name);   %一筆一筆取出資料的名稱
-    one=fscanf(fid,'Model=%d ', 1);%d代表使用整數,看取幾筆資料
-    data=fscanf(fid,'%f', [3 inf]);   %最後項為size，表示讀入三列資料，直到檔案底，inf代表EOF(End of File)，%f代表具有浮點之數據
-    data=data';%轉置                      讀出所有POINT的資料
-    data=data(:,2:3);
-    allpicmaxlen=max(max(allpicmaxlenth));    %找出所有圖形中哪個圖形的最長邊最長
-    data=ceil(data*allpicmaxlen);        %所有座標點乘上最長邊，放大比例
-    data=data+ceil(allpicmaxlen/2*1.5);
-    rtmap=zeros(ceil(allpicmaxlen)*1.5);%製造一個空白的矩陣
-    %subplot(1,length(allPoint),i),plot(data(:,2),-data(:,1)+max(max(data(:,1))),'o'),axis equal,axis tight;%plot出每個圖形放大並位移至第一象限 
-    for j=1:1:length(data)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
-        if(rtmap(data(j,1),data(j,2))~=1)
-            rtmap(data(j,1),data(j,2))=rtmap(data(j,1),data(j,2))+1;
-        end      
-    end
-    %figure,imshow(rtmap);     %印出在二進位圖 
-    fmapq{i}=abs(fft2(rtmap));
-    %figure,imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
-    fmapq{i}= fmapq{i}/ fmapq{i}(1,1);
-    %figure,imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');%畫出頻譜
-    fmapq{i}(1,1)=0;
-    fclose(fid);
-end
-%----------------------算距離----------------------------------
-originpic=9;%原圖
-
-
-for picnum=1:1:originpic-1
-       sum=0;
-    for i=1:1:size(rtmap,1)
-        for j=1:1:size(rtmap,2)
-            Disp2o=sqrt((fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j))* (fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j)));
-            sum=Disp2o+sum;
-        end
-    end
-    fftdist(1,picnum)=sum;
-end
-fftdistsmaller=fftdist/1000
-toc
-
-
