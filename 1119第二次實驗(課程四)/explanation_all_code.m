@@ -1,16 +1,18 @@
 %產出point檔
 clc;
 clear;
+close all;
 allFolder =dir;  %顯示某個資料夾的內容
+
 for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
     if allFolder(f).isdir==1  %如果是資料夾的話
         cd (allFolder(f).name);%cd到那個資料夾下
         allFile = dir('*.tif');
         for k=1:1:length(allFile)
             pic=imread(allFile(k).name);%對每一張tif圖片做處理
-            pic=pic>0;                  %pic中點大於0的話就是ture,給1
+            pic=pic>0;                  %pic中點大於0的話就是ture,給1     
             [x,y]=find(pic);            %找出矩陣X中的所有非零元素，並將這些元素的索引值填到[x,y]            
-            mx=0;                       %給mx初始值
+            mx=0;                       %給mx初始值            
             x_lenth=length(x);          %求出所有點的數量
             %point_distance=x_lenth/300;            %取300點，所有點數/取樣300點，即是每point_distance多少點取一次
             %distance=1:point_distance:length(x);   %取點距離
@@ -57,9 +59,11 @@ for i=1:1:length(allPoint)
     data=data';%轉置                      讀出所有POINT的資料
     data=data(:,2:3);
     allpicmaxlen=max(max(maxlength));    %找出所有圖形中哪個圖形的最長邊最長
-    data=ceil(data*allpicmaxlen);        %所有座標點乘上最長邊，放大比例
-    data=data+ceil(allpicmaxlen/2)+150;
-    rtmap=zeros(ceil(allpicmaxlen+300));%製造一個空白的矩陣
+    allpicminlen=min(min(maxlength));    %找出所有圖形中哪個圖形的最長邊最短
+    %data=ceil(data*allpicmaxlen);        %所有座標點乘上最長邊，放大比例
+    data=ceil(data*allpicminlen*0.9);        %所有座標點乘上最短邊，放大比例
+    data=data+ceil(allpicminlen/1.5);          %把整張圖挪到第一象限
+    rtmap=zeros(ceil(allpicmaxlen));%製造一個空白的矩陣
     %figure,plot(data(:,2),-data(:,1)+max(max(data(:,1))),'o'),axis equal,axis tight;%plot出每個圖形放大並位移至第一象限
     
     for j=1:1:length(data)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
@@ -69,14 +73,17 @@ for i=1:1:length(allPoint)
     end
     figure,imshow(rtmap);     %印出在二進位圖 
     fmapq{i}=abs(fft2(rtmap));
-    %figure,imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
+    %figure,subplot(3,3,k),imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
     fmapq{i}= fmapq{i}/ fmapq{i}(1,1);
     fmapq{i}(1,1)=0;
     fclose(fid);
 end
+
+
+
 originpic=9;%原圖
 
-
+figure,
 for picnum=1:1:originpic-1
        sum=0;
     for i=1:1:size(rtmap,1)

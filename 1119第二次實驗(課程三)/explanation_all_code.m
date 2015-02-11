@@ -1,6 +1,7 @@
 %產出point檔
 clc;
 clear;
+close all;
 allFolder =dir;  %顯示某個資料夾的內容
 
 for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
@@ -58,9 +59,11 @@ for i=1:1:length(allPoint)
     data=data';%轉置                      讀出所有POINT的資料
     data=data(:,2:3);
     allpicmaxlen=max(max(maxlength));    %找出所有圖形中哪個圖形的最長邊最長
-    data=ceil(data*allpicmaxlen);        %所有座標點乘上最長邊，放大比例
-    data=data+ceil(allpicmaxlen/2)+11;
-    rtmap=zeros(ceil(allpicmaxlen+12));%製造一個空白的矩陣
+    allpicminlen=min(min(maxlength));    %找出所有圖形中哪個圖形的最長邊最短
+    %data=ceil(data*allpicmaxlen);        %所有座標點乘上最長邊，放大比例
+    data=ceil(data*allpicminlen*0.9);        %所有座標點乘上最短邊，放大比例
+    data=data+ceil(allpicminlen/2);          %把整張圖挪到第一象限
+    rtmap=zeros(ceil(allpicmaxlen));%製造一個空白的矩陣
     %figure,plot(data(:,2),-data(:,1)+max(max(data(:,1))),'o'),axis equal,axis tight;%plot出每個圖形放大並位移至第一象限
     
     for j=1:1:length(data)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉

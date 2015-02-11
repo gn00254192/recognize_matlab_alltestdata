@@ -1,4 +1,3 @@
-%
 %產出point檔
 clc;
 clear;
@@ -37,7 +36,8 @@ for f=3:1:length(allFolder)   %用 length來判斷檔案的多寡
        %subplot(1,length(allFile),k),plot(y_barycentre,-x_barycentre,'x'),axis equal,axis tight   %將所有圖中心點移置重心，做位置正規化
        x_size=x_barycentre/mx;       %將所有位置正規化的x座標大小正規化，所有點座標除去最遠距離  
        y_size=y_barycentre/mx;       %將所有位置正規化的y座標大小正規化，所有點座標除去最遠距離     
-       subplot(1,length(allFile),k),plot(y_size,-x_size,'x'),axis equal,axis tight;     %將所有點除去最遠距離，做大小正規化   
+       %subplot(1,length(allFile),k),plot(y_size,-x_size,'x'),axis equal,axis tight;     %將所有點除去最遠距離，做大小正規化 
+       subplot(3,3,k),plot(y_size,-x_size,'x'),axis equal,axis tight   %將所有點除去最遠距離，做大小正規化  
        %subplot(1,length(allFile),k),plot(x1(xi),y1(xi),x1(nn),y1(nn),'--');
        sx=[x_size,y_size];
        fnMat = allFile(k).name;    
@@ -62,16 +62,16 @@ for i=1:1:length(allPoint)
     data=data';%轉置                      讀出所有POINT的資料
     data=data(:,2:3);
     allpicmaxlen=max(max(allpicmaxlenth));    %找出所有圖形中哪個圖形的最長邊最長
-    data=ceil(data*allpicmaxlen);        %所有座標點乘上最長邊，放大比例
-    data=data+ceil(allpicmaxlen/2*1.5);
-    rtmap=zeros(ceil(allpicmaxlen)*1.5);%製造一個空白的矩陣
+    data=ceil(data*allpicmaxlen*0.6);        %所有座標點乘上最長邊，放大比例
+    data=data+ceil(allpicmaxlen/2);
+    rtmap=zeros(ceil(allpicmaxlen));%製造一個空白的矩陣
     %subplot(1,length(allPoint),i),plot(data(:,2),-data(:,1)+max(max(data(:,1))),'o'),axis equal,axis tight;%plot出每個圖形放大並位移至第一象限 
     for j=1:1:length(data)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
         if(rtmap(data(j,1),data(j,2))~=1)
             rtmap(data(j,1),data(j,2))=rtmap(data(j,1),data(j,2))+1;
         end      
     end
-    %figure,imshow(rtmap);     %印出在二進位圖 
+    figure,imshow(rtmap);     %印出在二進位圖 
     fmapq{i}=abs(fft2(rtmap));
     %figure,imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
     fmapq{i}= fmapq{i}/ fmapq{i}(1,1);
@@ -81,7 +81,7 @@ for i=1:1:length(allPoint)
 end
 %----------------------算距離----------------------------------
 originpic=9;%原圖
-
+figure,
 
 for picnum=1:1:originpic-1
        sum=0;
@@ -92,7 +92,9 @@ for picnum=1:1:originpic-1
         end
     end
     fftdist(1,picnum)=sum;
+    subplot(3,3,picnum),imshow(abs(log(abs(fftshift(fmapq{picnum})))),[],'notruesize'),title('fft2');
 end
+    subplot(3,3,9),imshow(abs(log(abs(fftshift(fmapq{9})))),[],'notruesize'),title('fft2');
 fftdistsmaller=fftdist/1000
 toc
 

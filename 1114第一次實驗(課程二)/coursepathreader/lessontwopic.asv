@@ -1,9 +1,10 @@
+%將原圖轉成二質化影像
 clc;
 clear;
-pic=imread('drawline.png');
+pic=imread('pic_part2.bmp');
 pic=rgb2gray(pic);
-width=size(pic,2); %?取?像?
-lenght=size(imread('drawline.png'),1); %?取?像?
+width=size(pic,2); 
+lenght=size(imread('pic_part2.bmp'),1);
 
 figure,imshow(pic)
 
@@ -18,4 +19,4 @@ for i=1:1:lenght
     end
 end
 figure,imshow(picf);
-imwrite(picf,)
+imwrite(picf,['pic_part2.tif' ],'tif')
