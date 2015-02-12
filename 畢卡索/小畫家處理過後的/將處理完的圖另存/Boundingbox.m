@@ -1,7 +1,7 @@
 clc;
 clear;
 close all;
-Bounding_box=600;
+Bounding_box=50;
 allFile = dir('*.tif');
 for k=1:1:length(allFile)
     pic=imread(allFile(k).name);%對每一張tif圖片做處理
