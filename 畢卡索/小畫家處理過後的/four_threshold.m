@@ -1,7 +1,7 @@
 clc;
 close all;
 clear;
-pic=imread('7.png');
+pic=imread('origin.png');
 pic=rgb2gray(pic);
 
 width=size(pic,2); %¼e
@@ -17,10 +17,10 @@ graythreashpicture3=graythresh(cut3);
 graythreashpicture4=graythresh(cut4);
 
 
-change1=pic(1:(lenght/2),1:(width/2))>graythreashpicture1*200;
-change2=pic(1:(lenght/2),(width-(width/2)):width)>graythreashpicture2*225;
-change3=pic(lenght-(lenght/2):lenght,1:(width/2))>graythreashpicture3*230;
-change4=pic((lenght-(lenght/2)):lenght,(width-(width/2)):width)>graythreashpicture4*230;
+change1=pic(1:(lenght/2),1:(width/2))>graythreashpicture1*255;
+change2=pic(1:(lenght/2),(width-(width/2)):width)>graythreashpicture2*255;
+change3=pic(lenght-(lenght/2):lenght,1:(width/2))>graythreashpicture3*255;
+change4=pic((lenght-(lenght/2)):lenght,(width-(width/2)):width)>graythreashpicture4*255;
 
 
 for i=1:1:floor(lenght/2)

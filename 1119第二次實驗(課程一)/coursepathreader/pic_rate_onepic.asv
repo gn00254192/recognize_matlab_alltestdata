@@ -1,7 +1,9 @@
 clc;
 clear;
 close all;
-Bounding_box=100;
+add_temp=1;
+for Bounding_box=100:100:1000;
+sight_like=2;
 allFile = dir('*.tif');
 for k=1:1:length(allFile)
     pic=imread(allFile(k).name);%對每一張tif圖片做處理
@@ -57,7 +59,33 @@ for picnum=1:1:originpic-1
     %subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
 end
     %subplot(3,3,9),imshow(log(abs(fftshift(fmapq{9}))),[],'notruesize'),title('fft2');
-    fftdistsmaller=fftdist/10000
+  
+    fftdistsmaller_record(add_temp,:)=fftdist/10000;   %所有圖的距離算出
+    sorted_record(add_temp,:) = sort(fftdistsmaller_record(add_temp,:));  %將所有距離排序~存在sort裡
+    x_label(1,add_temp+1)=Bounding_box
+    fftdistsmaller=fftdist/10000;
+    sorted = sort(fftdistsmaller);
+    add_temp=add_temp+1;
+
+
+%----------------------------視覺化數據----------------------------------------------
+%1.我覺得像的是裡面第幾張圖
+%2.取出那一張的距離數據
+%3.找他在sort裡的索引
+%將索引值存下,接下來跑當bouding=100,200,300.....1000時的狀況
+%plot出來
+
+
+like_value=fftdistsmaller(sight_like);%2.取出那一張的距離數據
+like_final_sort_index(Bounding_box/100+1)=find(sorted==(like_value))%3.找他在sort裡的索引
+
+end
+
+
+figure,plot(x_label,like_final_sort_index,'--*');
+xlabel('boundingbox　size');
+ylabel('排名');
+
 
 
 

@@ -1,7 +1,7 @@
 clc;
 clear;
 close all;
-Bounding_box=50;
+Bounding_box=150;
 allFile = dir('*.tif');
 for k=1:1:length(allFile)
     pic=imread(allFile(k).name);%對每一張tif圖片做處理
@@ -23,7 +23,7 @@ for k=1:1:length(allFile)
     for j=1:1:length(x_magnify)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
             rtmap(x_magnify(j,1),y_magnify(j,1))=1;
     end
-    subplot(3,3,k),imshow(rtmap)     %show出放入空白矩陣圖片
+    %subplot(3,3,k),imshow(rtmap)     %show出放入空白矩陣圖片
     fmapq{k}=abs(fft2(rtmap));
     %figure,subplot(3,3,k),imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
     fmapq{k}= fmapq{k}/ fmapq{k}(1,1);

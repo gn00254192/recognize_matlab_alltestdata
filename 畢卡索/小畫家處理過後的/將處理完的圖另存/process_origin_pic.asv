@@ -1,0 +1,17 @@
+clc;
+close all;
+clear;
+pic=imread('test_origin.png');
+pic=rgb2gray(pic);
+%result_logic=imresize(pic,4);
+%imwrite(result_logic,['result_origin.tif' ],'tif')
+r=pic<185;
+figure,imshow(r)
+%se = strel('disk',2);        
+%erodedBW = imerode(r,se);
+%imshow(r), figure, imshow(erodedBW)
+%imwrite(erodedBW,['origin_pic.tif' ],'tif')
+pic=imread('test_origin.png');
+pic2=rgb2gray(pic2);
+r=pic<185;
+figure,imshow(r)
