@@ -77,5 +77,6 @@ end
 %    end
 %end
 sum(rate)/9
+Cost=Cost/1000
 
 save Cost4 Cost;

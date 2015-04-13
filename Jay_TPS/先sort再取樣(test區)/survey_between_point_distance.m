@@ -20,11 +20,11 @@ sx=[x,y];
      sort_coordinates(i,2)=sx(ind(i,1),2);
  end
 
-%  figure
-% for i=1:1:size(sort_coordinates,1)  %plot出來看
-%     plot(sort_coordinates(i,2),-sort_coordinates(i,1),'o');
-%     hold on;
-% end
+  figure
+ for i=1:1:size(sort_coordinates,1)  %plot出來看
+     plot(sort_coordinates(i,2),-sort_coordinates(i,1),'o');
+     hold on;
+ end
  
  
  %----------------開始算點彼此之間的距離----------------------------------
@@ -37,16 +37,21 @@ sx=[x,y];
       %中--後
       
       
-      if( point_distance(i,1)>1&& point_distance(i,1)<25)
+      if( point_distance(i,1)>1&& point_distance(i,1)<10)
           temp(j,1)=i;
           j=j+1;
       end
  end
-% point_distance=uint8(point_distance);     %看距離分布在那些位置上
-% figure,imhist(point_distance)
-
-
-
+ point_distance=uint8(point_distance);     %看距離分布在那些位置上
+ figure,imhist(point_distance)
+for i=1:1:size(point_distance,1)
+    if(point_distance(i,1)>50)
+        point_distance(i,1)=0;
+    end
+end
+point_distance=uint8(point_distance);     %看距離分布在那些位置上
+ figure,imhist(point_distance),axis tight
+  set(gca,'XLim',[0 55]);
 %---------------add_point_test----------------------------------------- 
 %j=1;
 %for i=1:1:1
@@ -91,18 +96,19 @@ end
 %------------------------------------------------------------------------- 
 add_total_point=[sort_coordinates;add_point];%將原本的跟新增的點合併起來
 
+
 %-------------------------------再ｓｏｒｔ一次------------------------------
-[sort_add_total_point,ind]=sort(add_total_point(:,1));%排序x軸,並記下index
+[sort_add_total_point,ind2]=sort(add_total_point(:,1));%排序x軸,並記下index
 
  for i=1:1:size(sort_add_total_point,1)  %排序X軸，並透過索引將y軸對應到對的x軸
-     sort_add_total_point(i,2)=add_total_point(ind(i,1),2);
+     sort_add_total_point(i,2)=add_total_point(ind2(i,1),2);
  end
 %-------------------------------------------------------------------------
- % figure
- %for i=1:1:size(sort_add_total_point,1)  %plot出來看
- %    plot(sort_add_total_point(i,2),-sort_add_total_point(i,1),'o');
- %    hold on;
- %end
+  figure
+ for i=1:1:size(sort_add_total_point,1)  %plot出來看
+     plot(sort_add_total_point(i,2),-sort_add_total_point(i,1),'o');
+     hold on;
+ end
   
  
   %---------------------取點(不增加點數)---------------------------------------------
@@ -117,11 +123,11 @@ add_total_point=[sort_coordinates;add_point];%將原本的跟新增的點合併起來
  
  sx1=[x11,y11];
  
- figure
- for i=1:1:size(sx1,1)
-     plot(sx1(i,2),-sx1(i,1),'o');
-     hold on;
- end
+% figure
+ %for i=1:1:size(sx1,1)
+ %    plot(sx1(i,2),-sx1(i,1),'o');
+ %    hold on;
+ %end
  %-------------------------------------------------------------------------
  
  
@@ -137,11 +143,11 @@ add_total_point=[sort_coordinates;add_point];%將原本的跟新增的點合併起來
  
  sx2=[x2,y2];
  
- figure
- for i=1:1:size(sx2,1)
-     plot(sx2(i,2),-sx2(i,1),'o');
-     hold on;
- end
+% figure
+ %for i=1:1:size(sx2,1)
+ %    plot(sx2(i,2),-sx2(i,1),'o');
+ %    hold on;
+% end
  %-------------------------------------------------------------------------
  
  

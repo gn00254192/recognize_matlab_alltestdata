@@ -76,6 +76,7 @@ end
 %        rate(i*2)=rate(i*2-1)
 %    end
 %end
+Cost=Cost/1000;
 sum(rate)/9
 
 save Cost4 Cost;

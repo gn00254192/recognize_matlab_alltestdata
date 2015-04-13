@@ -61,7 +61,7 @@ for F=0:1:(n-1)
         end
     end
 end
-Cost1=Cost/10000
+Cost1=Cost/1000
 %for i=1:1:(length(ratrae)/2)
 %    if MIN(i*2)<MIN(i*2-1)
 %         MIN(i*2-1)= MIN(i*2);
@@ -77,6 +77,6 @@ Cost1=Cost/10000
 %        rate(i*2)=rate(i*2-1)
 %    end
 %end
-sum(rate)/9
+
 
 save Cost1 Cost;

@@ -55,6 +55,11 @@ end
  end
  %------------------------------------------------------------ 
  
+[sort_coordinates,ind]=sort(sort_y(:,1));%排序x軸,並記下index
+
+ for i=1:1:size(sort_coordinates,1)  %排序X軸，並透過索引將y軸對應到對的x軸
+     sort_coordinates(i,2)=sort_y(ind(i,1),2);
+ end
 
  
  
@@ -62,9 +67,9 @@ end
  
  %--------------------------開始取樣點------------------------
 
- x1=sort_y(:,1);   %把排序好的分別給x軸y軸
- y1=sort_y(:,2);   %把排序好的分別給x軸y軸
- x_lenth=length(sort_y);
+ x1=sort_coordinates(:,1);   %把排序好的分別給x軸y軸
+ y1=sort_coordinates(:,2);   %把排序好的分別給x軸y軸
+ x_lenth=length(sort_coordinates);
  point_distance_choose=x_lenth/300;            %取300點，所有點數/取樣300點，即是每point_distance多少點取一次
  distance=1:point_distance_choose:length(sort_y);   %取點距離
         
