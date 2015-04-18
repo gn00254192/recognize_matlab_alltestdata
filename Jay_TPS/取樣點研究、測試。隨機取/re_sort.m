@@ -1,8 +1,8 @@
 clc;
 clear;
 close all;
-cut_row=2;  %有幾列，不是切幾刀
-cut_col=2;  %有幾行
+cut_row=10;  %有幾列，不是切幾刀
+cut_col=10;  %有幾行
 select_point=300;
 pic=imread('5762529972191233.tif');
 %figure,imshow(pic);
@@ -108,10 +108,15 @@ end
 %-------------------------------取樣-----------------------------------
 for i=1:1:size(save_pic_cut,2)
     for j=1:1:size(save_pic_cut,1)
-        [x,y]=find(save_pic_cut{j,i});
-        for k=1:1:int_select_point(j,i)
-            x_temp{j,i}(k,1)=x(random_index{j,i}(1,k));
-            y_temp{j,i}(k,1)=y(random_index{j,i}(1,k));
+        if(isempty(random_index{j,i})==0)
+            [x,y]=find(save_pic_cut{j,i});
+            for k=1:1:int_select_point(j,i)
+                x_temp{j,i}(k,1)=x(random_index{j,i}(1,k));
+                y_temp{j,i}(k,1)=y(random_index{j,i}(1,k));
+            end
+        else
+            x_temp{j,i}=[];
+            y_temp{j,i}=[];
         end
         %figure,plot(y_temp{j,i},-x_temp{j,i},'o')
     end
