@@ -1,13 +1,15 @@
 clc;
 clear;
 close all;
-cut_row=10;  %有幾列，不是切幾刀
-cut_col=10;  %有幾行
 select_point=300;
-pic=imread('5762529972191233.tif');
+pic=imread('5161210659995648.tif');
 %figure,imshow(pic);
 Long=size(pic,1);     %看影像有多長
 Wide=size(pic,2);     %看影像寬有多寬
+
+cut_row=30;  %有幾列，不是切幾刀
+cut_col=30;  %有幾行
+
 col_interval=floor(Wide/cut_col);  %算出行間距,取floor,剩下的都給最後一個
 row_interval=floor(Long/cut_row);  %算出列間距,取floor,剩下的都給最後一個
 cut_temp=ones((cut_row+1),(cut_col+1)*2);%創一個0矩陣用來之後放每個矩陣的切點座標
@@ -88,9 +90,10 @@ int_select_point=floor((save_pixel_count/total_point)*select_point);
 %----------------計算每張圖要取樣多少點end----------------------
 
 %----------------------將點補滿到足夠---------------------------
+
 while(sum(sum(int_select_point))<select_point)
     decimal_point=float_select_point-int_select_point;
-    temp_decimal_point=find(decimal_point==max(max(decimal_point)));
+    temp_decimal_point=find(decimal_point==max(max(decimal_point)),1);
     decimal_point(temp_decimal_point)=0;
     int_select_point(temp_decimal_point)=int_select_point(temp_decimal_point)+1;
 end
@@ -150,7 +153,7 @@ for i=2:1:size(save_pic_cut,2)
     end
 end
 
-figure,plot(x_y_merge(:,2),-x_y_merge(:,1),'o')
+figure,plot(x_y_merge(:,2),-x_y_merge(:,1),'o'),title([num2str(cut_row),'*',num2str(cut_col)])
 %x=x_temp{1,1};
 %y=y_temp{1,1};
 %x_y_merge=[x,y];
