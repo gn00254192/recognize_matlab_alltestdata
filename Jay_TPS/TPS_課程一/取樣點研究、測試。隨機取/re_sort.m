@@ -156,8 +156,15 @@ for i=2:1:size(save_pic_cut,2)
         x_y_merge=[x_y_merge;x_y_temp];
     end
 end
-size(x_y_merge)
-figure,plot(x_y_merge(:,2),-x_y_merge(:,1),'o'),title([num2str(cut_row),'*',num2str(cut_col)])
+
+    xminimum=min(x_y_merge(:,1));            %x取最小座標
+    yminimum=min(x_y_merge(:,2));            %y取最小座標
+    xmaximum=max(x_y_merge(:,1));            %x取最大座標
+    ymaximum=max(x_y_merge(:,2));            %y取最大座標
+    x1=x_y_merge(:,1)-xminimum+1;               %所有座標減去最小值,讓圖片可貼在(1,1)上
+    y1=x_y_merge(:,2)-yminimum+1;               %所有座標減去最小值,讓圖片可貼在(1,1)上
+    size(x_y_merge)
+    x_y_merge=[x1,y1];
 
 
     fnMat = allFile(kp).name;    
@@ -167,6 +174,8 @@ figure,plot(x_y_merge(:,2),-x_y_merge(:,1),'o'),title([num2str(cut_row),'*',num2
      for i=1:size(x_y_merge,1)
         fprintf( fpLink, '%d\t%25.20f\t%25.20f\n', i-1, x_y_merge(i, 1), x_y_merge(i, 2) );
      end;
+     figure,plot(x_y_merge(:,2),-x_y_merge(:,1),'o'),title([num2str(cut_row),'*',num2str(cut_col)])
+
      clear x_y_merge col_interval count cut_temp decimal_point float_select_point h i int_select_point j k num_col num_row random_index row_interval x x1 x_temp y y1 y_temp;
      fclose( fpLink );
 end

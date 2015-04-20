@@ -2,7 +2,7 @@ clc;
 clear;
 close all;
 select_point=300;
-pic=imread('5161210659995648.tif');
+pic=imread('5762529972191233.tif');
 %figure,imshow(pic);
 Long=size(pic,1);     %看影像有多長
 Wide=size(pic,2);     %看影像寬有多寬
