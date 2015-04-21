@@ -154,11 +154,4 @@ for i=2:1:size(save_pic_cut,2)
 end
 
 figure,plot(x_y_merge(:,2),-x_y_merge(:,1),'o'),title([num2str(cut_row),'*',num2str(cut_col)])
-%x=x_temp{1,1};
-%y=y_temp{1,1};
-%x_y_merge=[x,y];
-%x=x_temp{1,2};
-%y=y_temp{1,2}+540;
-%x_y_temp=[x,y];
-%x_y_merge=[x_y_merge;x_y_temp];
-%figure,plot(x_y_merge(:,2),-x_y_merge(:,1),'o')
+
