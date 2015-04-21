@@ -2,6 +2,7 @@ clc;
 clear;
 close all;
 select_point=300;
+Bounding_box=500;
 cut_row=108;  %有幾列，不是切幾刀
 cut_col=108;  %有幾行
 allFile = dir('*.tif');
@@ -163,8 +164,16 @@ end
     ymaximum=max(x_y_merge(:,2));            %y取最大座標
     x1=x_y_merge(:,1)-xminimum+1;               %所有座標減去最小值,讓圖片可貼在(1,1)上
     y1=x_y_merge(:,2)-yminimum+1;               %所有座標減去最小值,讓圖片可貼在(1,1)上
+    
+    x_magnification=(Bounding_box-2)/(xmaximum-xminimum); %看ｘ要放大多少倍 -2是為了怕ceil往上加一
+    y_magnification=(Bounding_box-2)/(ymaximum-yminimum); %看ｙ要放大多少倍
+    x_magnify=ceil(x1*x_magnification);    %放大ｘ   用ceil是怕floor座標會有0值
+    y_magnify =ceil(y1*y_magnification);   %放大ｙ
+    
+    
+    
     size(x_y_merge)
-    x_y_merge=[x1,y1];
+    x_y_merge=[x_magnify,y_magnify];
 
 
     fnMat = allFile(kp).name;    

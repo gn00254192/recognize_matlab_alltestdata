@@ -1,7 +1,7 @@
 clc;
 clear;
 close all;
-fid=fopen('face9a_face2a.match');
+fid=fopen('face9a_face8a.match');
 one=fscanf(fid,'Model=%d ', 1);
 A=fscanf(fid,'%f', [3 inf]);  %最後項為size，表示讀入二列資料，直到檔案底
 A=A';
