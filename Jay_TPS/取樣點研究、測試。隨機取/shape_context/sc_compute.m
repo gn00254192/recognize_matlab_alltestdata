@@ -53,6 +53,7 @@ for n=1:nsamp
    fzn=fz(n,:)&in_vec;
    Sn=sparse(theta_array_q(n,fzn),r_array_q(n,fzn),1,nbins_theta,nbins_r);
    BH(n,:)=Sn(:)';
+   %scTest();  
 end
 
 

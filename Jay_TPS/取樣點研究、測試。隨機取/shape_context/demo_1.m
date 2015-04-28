@@ -5,8 +5,8 @@
 %load save_fish_def_3_1.mat
 %load save_fish_noise_3_2.mat
 %load save_fish_outlier_3_2.mat
-%load save_face.mat
-load save_face_ttttt.mat
+load save_face.mat
+%load save_face_ttttt.mat
 %load save_face_two_diff_pic.mat
 X=x1;
 Y=y2a;
