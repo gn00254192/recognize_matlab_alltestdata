@@ -157,10 +157,7 @@ for i=1:1:2
                     record(num_count3,3)=k;   %紀錄跑Rand_seed index怎麼跑
                     record(num_count3,2)=j;
                     record(num_count3,1)=i;
-                    
-                    
-                  
-                    
+  
                     for f=1:1:size(Y2(:,1),1)
                         if(f~=i && f~=j && f~=k)
                             mapping=[X2b(Rand_seed(f),1) X2b(Rand_seed(f),2) 1]*[tform2.tdata.T]; 
@@ -168,23 +165,57 @@ for i=1:1:2
                             Y_tran{num_count3,1}(Rand_seed(f),1)=mapping(1,1);%紀錄mapping的點座標
                             Y_tran{num_count3,1}(Rand_seed(f),2)=mapping(1,2);
                             
-                            %figure(3)
-                            %plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro') 
-                            %hold on
-                            %plot([X2b(f,1) Y2(f,1)]',[X2b(f,2) Y2(f,2)]','k-')
-                            %hold off
-                            %title([int2str(n_good) ' correspondences (unwarped X)'])
-                            %pause;
+                            Y_tran{num_count3,1}(Rand_seed(f),3)=sqrt((mapping(1,1)-Y2(Rand_seed(f),1))^2+(mapping(1,2)-Y2(Rand_seed(f),2))^2);%算與標準答案的差距
+                            
                         else
-                            Y_tran{num_count3,1}(Rand_seed(f),1)=1000;%紀錄mapping的點座標
-                            Y_tran{num_count3,1}(Rand_seed(f),2)=1000;
+                            Y_tran{num_count3,1}(Rand_seed(f),1)=Y2(Rand_seed(f),1);%紀錄mapping的點座標
+                            Y_tran{num_count3,1}(Rand_seed(f),2)=Y2(Rand_seed(f),2);
                             
                         end
                     end
-                  num_count3=num_count3+1;
+                   
+                  num_count3=num_count3+1;           
                 end
             end
         end
     end
 end
+for i=1:1:size(Y_tran(:,1),1)       %show 直方圖
+    %figure, hist(Y_tran{i,1}(:,1), 20)
+end
 
+%--------------------------再圖上畫線觀察--------start---------------------------------
+
+figure,    
+for j=1:1:size(Y_tran,1)
+    hold off;
+    plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro') 
+    hold on;
+    plot(X(Rand_seed(record(j,1)),1),X(Rand_seed(record(j,1)),2),'Rx')
+    plot(X(Rand_seed(record(j,2)),1),X(Rand_seed(record(j,2)),2),'Rx')
+    plot(X(Rand_seed(record(j,3)),1),X(Rand_seed(record(j,3)),2),'Rx')
+    
+    plot([X2b(Rand_seed(record(j,1)),1) X2b(Rand_seed(record(j,2)),1)]',[X2b(Rand_seed(record(j,1)),2) X2b(Rand_seed(record(j,2)),2)]','k-')
+    plot([X2b(Rand_seed(record(j,2)),1) X2b(Rand_seed(record(j,3)),1)]',[X2b(Rand_seed(record(j,2)),2) X2b(Rand_seed(record(j,3)),2)]','k-')
+    plot([X2b(Rand_seed(record(j,3)),1) X2b(Rand_seed(record(j,1)),1)]',[X2b(Rand_seed(record(j,3)),2) X2b(Rand_seed(record(j,1)),2)]','k-')
+    
+    %plot([X2b(Rand_seed(record(j,1),1),1) Y2(Rand_seed(record(j,1),1),1)]',[X2b(Rand_seed(record(j,1),1),2) Y2(Rand_seed(record(j,1),1),2)]','k-')
+    %plot([X2b(Rand_seed(record(j,2),1),1) Y2(Rand_seed(record(j,2),1),1)]',[X2b(Rand_seed(record(j,2),1),2) Y2(Rand_seed(record(j,2),1),2)]','k-')
+    %plot([X2b(Rand_seed(record(j,3),1),1) Y2(Rand_seed(record(j,3),1),1)]',[X2b(Rand_seed(record(j,3),1),2) Y2(Rand_seed(record(j,3),1),2)]','k-')
+    
+    plot([Y2(Rand_seed(record(j,1)),1) Y2(Rand_seed(record(j,2)),1)]',[Y2(Rand_seed(record(j,1)),2) Y2(Rand_seed(record(j,2)),2)]','m--')
+    plot([Y2(Rand_seed(record(j,2)),1) Y2(Rand_seed(record(j,3)),1)]',[Y2(Rand_seed(record(j,2)),2) Y2(Rand_seed(record(j,3)),2)]','m--')
+    plot([Y2(Rand_seed(record(j,3)),1) Y2(Rand_seed(record(j,1)),1)]',[Y2(Rand_seed(record(j,3)),2) Y2(Rand_seed(record(j,1)),2)]','m--')
+    
+    hold off;
+    figure,
+    for i=1:1:size(Y2(:,1),1)
+        plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro') 
+        hold on
+        plot([X2b(i,1) Y_tran{j,1}(i,1)]',[X2b(i,2) Y_tran{j,1}(i,2)]','k-')
+        hold on
+        pause;
+    end
+end
+
+%--------------------------再圖上畫線觀察--------end----------------------------
