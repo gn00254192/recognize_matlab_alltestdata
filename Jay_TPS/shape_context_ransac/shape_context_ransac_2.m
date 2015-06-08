@@ -6,7 +6,7 @@ close all;
 
 % uncomment out one of these commands to load in some shape data
 load save_fish_def_3_1.mat
-%load face_x_y.mat
+%load face_x_y2.mat
 %load save_face_notresize.mat
 %load save_fish_noise_3_2.mat
 %load save_fish_outlier_3_2.mat
@@ -14,6 +14,8 @@ load save_fish_def_3_1.mat
 %load save_face_ttttt.mat
 %load save_face_notdo_anything.mat
 %load save_face_two_diff_pic.mat
+several_times=4;  %轉移矩陣做幾次---不可低於3次
+
 X=x1;
 Y=y2a;
 
@@ -143,10 +145,10 @@ Rand_seed=randperm(size(X2b(:,1),1))';
 num_count3=1;
 count=0;
 ct2=1;
-for i=1:1:2     
-    for j=2:1:3
+for i=1:1:several_times-2     
+    for j=2:1:several_times-1
         if(j~=i)            
-            for k=3:1:4
+            for k=3:1:several_times
                 if(k~=j && k~=i )
                     in_points = [X2b(Rand_seed(i),1) X2b(Rand_seed(i),2);X2b(Rand_seed(j),1) X2b(Rand_seed(j),2);X2b(Rand_seed(k),1) X2b(Rand_seed(k),2)];   
                     out_points = [Y2(Rand_seed(i),1) Y2(Rand_seed(i),2);Y2(Rand_seed(j),1) Y2(Rand_seed(j),2);Y2(Rand_seed(k),1) Y2(Rand_seed(k),2)]; 
@@ -180,21 +182,33 @@ for i=1:1:2
         end
     end
 end
-for i=1:1:size(Y_tran(:,1),1)       %show 直方圖
+%for i=1:1:size(Y_tran(:,1),1)       %show 直方圖
     %figure, hist(Y_tran{i,1}(:,1), 20)
+%end
+
+%--------------------------計算每個平均差值------start-------------------
+for i=1:1:size(Y_tran,1)
+    Y_tran{i,:}(1,4)=mean(Y_tran{i,:}(:,3));
 end
+%--------------------------計算每個平均差值------end-------------------
+
 
 %--------------------------再圖上畫線觀察--------start---------------------------------
 
-figure,    
+threshold=0.05;
+
+    
 for j=1:1:size(Y_tran,1)
-    hold off;
+    %hold off;
+    figure,
     plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro') 
     hold on;
-    plot(X(Rand_seed(record(j,1)),1),X(Rand_seed(record(j,1)),2),'Rx')
-    plot(X(Rand_seed(record(j,2)),1),X(Rand_seed(record(j,2)),2),'Rx')
-    plot(X(Rand_seed(record(j,3)),1),X(Rand_seed(record(j,3)),2),'Rx')
+    %-------------點出第一個三角形-------------------
+    plot(X2b(Rand_seed(record(j,1)),1),X2b(Rand_seed(record(j,1)),2),'Rx')
+    plot(X2b(Rand_seed(record(j,2)),1),X2b(Rand_seed(record(j,2)),2),'Rx')
+    plot(X2b(Rand_seed(record(j,3)),1),X2b(Rand_seed(record(j,3)),2),'Rx')
     
+    %------------用線畫出第一個三角形---------------
     plot([X2b(Rand_seed(record(j,1)),1) X2b(Rand_seed(record(j,2)),1)]',[X2b(Rand_seed(record(j,1)),2) X2b(Rand_seed(record(j,2)),2)]','k-')
     plot([X2b(Rand_seed(record(j,2)),1) X2b(Rand_seed(record(j,3)),1)]',[X2b(Rand_seed(record(j,2)),2) X2b(Rand_seed(record(j,3)),2)]','k-')
     plot([X2b(Rand_seed(record(j,3)),1) X2b(Rand_seed(record(j,1)),1)]',[X2b(Rand_seed(record(j,3)),2) X2b(Rand_seed(record(j,1)),2)]','k-')
@@ -203,19 +217,87 @@ for j=1:1:size(Y_tran,1)
     %plot([X2b(Rand_seed(record(j,2),1),1) Y2(Rand_seed(record(j,2),1),1)]',[X2b(Rand_seed(record(j,2),1),2) Y2(Rand_seed(record(j,2),1),2)]','k-')
     %plot([X2b(Rand_seed(record(j,3),1),1) Y2(Rand_seed(record(j,3),1),1)]',[X2b(Rand_seed(record(j,3),1),2) Y2(Rand_seed(record(j,3),1),2)]','k-')
     
+    %----------------用線畫出第二個三角形-------------------
     plot([Y2(Rand_seed(record(j,1)),1) Y2(Rand_seed(record(j,2)),1)]',[Y2(Rand_seed(record(j,1)),2) Y2(Rand_seed(record(j,2)),2)]','m--')
     plot([Y2(Rand_seed(record(j,2)),1) Y2(Rand_seed(record(j,3)),1)]',[Y2(Rand_seed(record(j,2)),2) Y2(Rand_seed(record(j,3)),2)]','m--')
     plot([Y2(Rand_seed(record(j,3)),1) Y2(Rand_seed(record(j,1)),1)]',[Y2(Rand_seed(record(j,3)),2) Y2(Rand_seed(record(j,1)),2)]','m--')
-    
+    ,title(['mean=' num2str(Y_tran{j,:}(1,4)) ])
     hold off;
+    figure, hist(Y_tran{j,1}(:,3), 15),title(['mean=' num2str(Y_tran{j,:}(1,4)) ])
     figure,
     for i=1:1:size(Y2(:,1),1)
         plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro') 
         hold on
-        plot([X2b(i,1) Y_tran{j,1}(i,1)]',[X2b(i,2) Y_tran{j,1}(i,2)]','k-')
+        plot([X2b(i,1) Y_tran{j,1}(i,1)]',[X2b(i,2) Y_tran{j,1}(i,2)]','k-');
         hold on
-        pause;
+        %pause;
+%-----------------給閥值----在閥值內的給1-----start----------        
+         if(Y_tran{j,1}(i,3)<=threshold)
+            Y_tran{j,1}(i,5)=1;
+         else
+            Y_tran{j,1}(i,5)=0;
+         end
+ %-----------------給閥值----在閥值內的給1-----end----------         
     end
+    %pause;
+    hold off;
+%---------------在閥值內的畫綠線--------start----------------    
+    figure,
+    for n=1:1:size(Y2(:,1),1)
+        plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro') 
+        hold on
+        if(Y_tran{j,1}(n,5)==1)
+            plot([X2b(n,1) Y_tran{j,1}(n,1)]',[X2b(n,2) Y_tran{j,1}(n,2)]','g-'),title(['threshold=' num2str(threshold) ]);
+            hold on
+        else
+            plot([X2b(n,1) Y_tran{j,1}(n,1)]',[X2b(n,2) Y_tran{j,1}(n,2)]','r-'),title(['threshold=' num2str(threshold)]);
+            hold on
+        end        
+    end    
+    hold off;   
+%---------------在閥值內的畫綠線--------end----------------     
 end
 
 %--------------------------再圖上畫線觀察--------end----------------------------
+
+%threshold=0.045;
+%for i=1:1:size(Y_tran(:,1),1)     %voting   對的給1錯的給0  
+%    for j=1:1:size(Y_tran{1,1},1)
+%        if(Y_tran{i,1}(j,3)<=threshold)
+%            Y_tran{i,1}(j,5)=1;
+%        else
+%            Y_tran{i,1}(j,5)=0;
+%        end
+%    end
+%end
+
+  
+%for i=1:1:size(Y_tran,1)    %畫圖,對的畫綠色線,錯的畫紅色線
+%figure,
+%    for j=1:1:size(Y2(:,1),1)
+%        plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro') 
+%        hold on
+%        if(Y_tran{i,1}(j,5)==1)
+%            plot([X2b(j,1) Y_tran{i,1}(j,1)]',[X2b(j,2) Y_tran{i,1}(j,2)]','g-'),title(['threshold=' num2str(threshold) ]);
+%            hold on
+%        else
+%            plot([X2b(j,1) Y_tran{i,1}(j,1)]',[X2b(j,2) Y_tran{i,1}(j,2)]','r-'),title(['threshold=' num2str(threshold)]);
+%            hold on
+%        end
+        
+%    end
+    
+%    hold off;
+%end
+%--------------統計每個點數對幾次--------------
+correct_point(1:size(Y_tran{1,1},1),1)=0;%初始化
+for i=1:1:size(Y_tran(:,1),1)    
+    for j=1:1:size(Y_tran{1,1},1)
+        if(Y_tran{i,1}(j,5)==1)
+            correct_point(j,1)=correct_point(j,1)+1;
+        else
+            correct_point(j,1)=correct_point(j,1);
+        end  
+    end
+end
+%--------------統計每個點數對幾次--------------
