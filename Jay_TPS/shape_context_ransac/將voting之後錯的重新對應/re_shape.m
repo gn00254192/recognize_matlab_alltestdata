@@ -5,7 +5,8 @@ close all;
 % match two pointsets from Chui & Rangarajan
 
 % uncomment out one of these commands to load in some shape data
-load save_fish_def_3_1.mat
+load face_pic9_pic3.mat
+%load save_fish_def_3_1.mat
 %load face_x_y2.mat
 %load save_face_notresize.mat
 %load save_fish_noise_3_2.mat
@@ -14,7 +15,7 @@ load save_fish_def_3_1.mat
 %load save_face_ttttt.mat
 %load save_face_notdo_anything.mat
 %load save_face_two_diff_pic.mat
-several_times=3;  %轉移矩陣做幾次---不可低於3次
+several_times=6;  %轉移矩陣做幾次---不可低於3次
 
 X=x1;
 Y=y2a;
@@ -304,5 +305,148 @@ end
 %--------------統計每個點數對幾次--------------
 
 
+%--------------將voting後的點，認定是對的放在-------------------
+%------correct_point_set_X2b及correct_point_set_Y2-------------
+%---認定是錯的點放在Wrong_point_set_X2b及Wrong_point_set_Y2-----
+for i=1:1:size(Y_tran(:,1),1)   
+    correct_count=1;
+    Wrong_count=1;
+    for j=1:1:size(Y_tran{1,1},1)
+        if(Y_tran{i,1}(j,5)==1)
+            correct_point_set_X2b{i,1}(correct_count,:)=X2b(j,:);
+            correct_point_set_Y2{i,1}(correct_count,:)=Y2(j,:);
+            correct_count=correct_count+1;
+        else
+            Wrong_point_set_X2b{i,1}(Wrong_count,:)=X2b(j,:);
+            Wrong_point_set_Y2{i,1}(Wrong_count,:)=Y2(j,:);
+            Wrong_count=Wrong_count+1;
+        end
+    end
+ %   figure,
+ %   plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro')  %把我們認定是對的點畫出來看看
+ %   hold on
+ %   plot([correct_point_set_X2b{i,1}(:,1) correct_point_set_Y2{i,1}(:,1)]',[correct_point_set_X2b{i,1}(:,2) correct_point_set_Y2{i,1}(:,2)]','k-')
+ %   hold off
+end
+%------------------------------------------------------------------
+
+
+%-----------------將每次轉換矩陣，我們認為錯的點重新跑shape_context--------
+original_X2b=X2b;
+original_Y2=Y2;
+original_X=X;
+original_Y=Y;
+reshcontext_resultX2b{:,:}=[]; 
+reshcontext_resultY2{:,:}=[];
+for i=1:1:size(Y_tran(:,1),1)  
+    save tmp.mat tform2 threshold original_X2b original_Y2 Wrong_point_set_X2b Wrong_point_set_Y2 correct_point_set_X2b correct_point_set_Y2 original_X original_Y correct_point Y_tran record Rand_seed transform_matrix i reshcontext_resultX2b reshcontext_resultY2;
+    clear all;
+    load tmp.mat;
+    X=Wrong_point_set_X2b{i,1};
+    Y=Wrong_point_set_Y2{i,1};
+    display_flag=1;
+    mean_dist_global=[]; % use [] to estimate scale from the data
+    nbins_theta=12;
+    nbins_r=5;
+    nsamp1=size(X,1);
+    nsamp2=size(Y,1);
+    ndum1=0;
+    ndum2=0;
+
+    if nsamp2>nsamp1
+        % (as is the case in the outlier test)
+        ndum1=ndum1+(nsamp2-nsamp1);
+    end
+
+    eps_dum=0.15;
+    r_inner=1/8;
+    r_outer=2;
+    n_iter=5;
+    r=1; % annealing rate
+    beta_init=1;  % initial regularization parameter (normalized)
+
+    if display_flag
+        [x,y]=meshgrid(linspace(0,1,18),linspace(0,1,36));
+        x=x(:);y=y(:);M=length(x);
+    end
+    
+    
+    Xk=X; 
+    k=1;
+    s=1;
+    out_vec_1=zeros(1,nsamp1); 
+    out_vec_2=zeros(1,nsamp2);
+    disp(['iter=' int2str(k)])
+    [BH1,mean_dist_1]=sc_compute(Xk',zeros(1,nsamp1),mean_dist_global,nbins_theta,nbins_r,r_inner,r_outer,out_vec_1);
+    [BH2,mean_dist_2]=sc_compute(Y',zeros(1,nsamp2),mean_dist_1,nbins_theta,nbins_r,r_inner,r_outer,out_vec_2);
+    beta_k=(mean_dist_1^2)*beta_init*r^(k-1);
+    costmat=hist_cost_2(BH1,BH2);
+    nptsd=nsamp1+ndum1;
+    costmat2=eps_dum*ones(nptsd,nptsd);
+    costmat2(1:nsamp1,1:nsamp2)=costmat;
+    disp('running hungarian alg.')
+    cvec=hungarian(costmat2);
+    disp('done.')
+    [a,cvec2]=sort(cvec);
+    out_vec_1=cvec2(1:nsamp1)>nsamp2;
+    out_vec_2=cvec(1:nsamp2)>nsamp1;
+    X2=NaN*ones(nptsd,2);
+    X2(1:nsamp1,:)=Xk;
+    X2=X2(cvec,:);
+    X2b=NaN*ones(nptsd,2);
+    X2b(1:nsamp1,:)=X;
+    X2b=X2b(cvec,:);
+    Y2=NaN*ones(nptsd,2);
+    Y2(1:nsamp2,:)=Y;
+    % extract coordinates of non-dummy correspondences and use them
+    % to estimate transformation
+    ind_good=find(~isnan(X2b(1:nsamp1,1)));
+    % NOTE: Gianluca said he had to change nsamp1 to nsamp2 in the
+    % preceding line to get it to work properly when nsamp1~=nsamp2 and
+    % both sides have outliers...
+    n_good=length(ind_good);
+    X3b=X2b(ind_good,:);
+    Y3=Y2(ind_good,:);
+
+    
+    reshcontext_resultX2b{i,1}=X2b;   %將再次shape_context的結果儲存起來
+    reshcontext_resultY2{i,1}=Y2;
+end
+
+
+for f=1:1:size(reshcontext_resultX2b{1,1},1)
+    mapping=[reshcontext_resultX2b{1,1}(f,1) reshcontext_resultX2b{1,1}(f,2) 1]*[tform2.tdata.T]; 
+    %剩下的點要乘上轉換矩陣~看是否shape_context的匹配有對
+    Y_tran_again{1,1}(f,1)=mapping(1,1);%紀錄mapping的點座標
+    Y_tran_again{1,1}(f,2)=mapping(1,2);                            
+    Y_tran_again{1,1}(f,3)=sqrt((mapping(1,1)-reshcontext_resultY2{1,1}(f,1))^2+(mapping(1,2)-reshcontext_resultY2{1,1}(f,2))^2);%算與標準答案的差距   
+    
+    if(Y_tran_again{1,1}(f,3)<=threshold)    %show出看改善了幾個點
+            Y_tran_again{1,1}(f,5)=1;
+    else
+            Y_tran_again{1,1}(f,5)=0;
+    end
+end 
+Y_tran_again{1,1}(3,4)=sum(Y_tran_again{1,1}(:,5)) %看每次轉換矩陣對的點總共有幾個
+Y_tran_again{1,1}(1,4)=mean(Y_tran_again{1,1}(:,3));%算每次轉換矩陣與正確答案距離平均
+
+
+% show the correspondences between the untransformed images
+figure,
+plot(original_X(:,1),original_X(:,2),'b+',original_Y(:,1),original_Y(:,2),'ro')
+hold on
+for i=1:1:size(reshcontext_resultX2b{1,1},1)
+    if(Y_tran_again{1,1}(i,5)==1)
+        plot([reshcontext_resultX2b{1,1}(i,1) reshcontext_resultY2{1,1}(i,1)]',[reshcontext_resultX2b{1,1}(i,2) reshcontext_resultY2{1,1}(i,2)]','r-')
+        hold on
+    else
+        plot([reshcontext_resultX2b{1,1}(i,1) reshcontext_resultY2{1,1}(i,1)]',[reshcontext_resultX2b{1,1}(i,2) reshcontext_resultY2{1,1}(i,2)]','k-')
+        hold on
+    end
+end
+plot([correct_point_set_X2b{1,1}(:,1) correct_point_set_Y2{1,1}(:,1)]',[correct_point_set_X2b{1,1}(:,2) correct_point_set_Y2{1,1}(:,2)]','g-')
+,title(['threshold=0.05,' '再次做Shape context，改善了' num2str(Y_tran_again{1,1}(3,4)) '個點' ,sprintf('\n'), 'Correct point number=' num2str(Y_tran{1,1}(3,4)),sprintf('\n'),'Wrong point number=' num2str(size(original_X,1)-Y_tran{1,1}(3,4))])
+hold off
+drawnow	
 
 

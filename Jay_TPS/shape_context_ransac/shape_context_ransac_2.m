@@ -14,7 +14,7 @@ load save_fish_def_3_1.mat
 %load save_face_ttttt.mat
 %load save_face_notdo_anything.mat
 %load save_face_two_diff_pic.mat
-several_times=4;  %轉移矩陣做幾次---不可低於3次
+several_times=3;  %轉移矩陣做幾次---不可低於3次
 
 X=x1;
 Y=y2a;
@@ -291,13 +291,18 @@ end
 %end
 %--------------統計每個點數對幾次--------------
 correct_point(1:size(Y_tran{1,1},1),1)=0;%初始化
-for i=1:1:size(Y_tran(:,1),1)    
+for i=1:1:size(Y_tran(:,1),1)   
+    Y_tran{i,1}(3,4)=sum(Y_tran{i,1}(:,5)) %看每次轉換矩陣對的點總共有幾個
     for j=1:1:size(Y_tran{1,1},1)
         if(Y_tran{i,1}(j,5)==1)
-            correct_point(j,1)=correct_point(j,1)+1;
+            correct_point(j,1)=correct_point(j,1)+1;%統計每個點在n次的轉換矩陣中對幾次
         else
             correct_point(j,1)=correct_point(j,1);
         end  
     end
 end
 %--------------統計每個點數對幾次--------------
+
+
+
+

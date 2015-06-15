@@ -1,0 +1,219 @@
+clc;
+clear;
+close all;
+%recording{loop_count,2}=  X=x1
+%recording{loop_count,3}=  Y=y2a
+%recording{loop_count,4}=  X2b
+%recording{loop_count,5}=  Y2
+%recording{loop_count,6}=  correct_point_set_X2b
+%recording{loop_count,7}=  correct_point_set_Y2
+
+
+
+% Shape Context Demo #1
+% match two pointsets from Chui & Rangarajan
+
+% uncomment out one of these commands to load in some shape data
+%load face_pic9_pic3.mat
+load save_fish_def_3_1.mat
+%load face_x_y2.mat
+%load save_face_notresize.mat
+%load save_fish_noise_3_2.mat
+%load save_fish_outlier_3_2.mat
+%load save_face.mat
+%load save_face_ttttt.mat
+%load save_face_notdo_anything.mat
+%load save_face_two_diff_pic.mat
+loop_count=1;
+threshold=0.05;
+
+while(size(x1,1)>4)
+%-------------shape context----------------------------
+    X=x1;
+    Y=y2a;
+    display_flag=1;
+    mean_dist_global=[]; % use [] to estimate scale from the data
+    nbins_theta=12;
+    nbins_r=5;
+    nsamp1=size(X,1);
+    nsamp2=size(Y,1);
+    ndum1=0;
+    ndum2=0;
+    if nsamp2>nsamp1
+        % (as is the case in the outlier test)
+        ndum1=ndum1+(nsamp2-nsamp1);
+    end
+    eps_dum=0.15;
+    r_inner=1/8;
+    r_outer=2;
+    n_iter=5;
+    r=1; % annealing rate
+    beta_init=1;  % initial regularization parameter (normalized)
+    if display_flag
+        [x,y]=meshgrid(linspace(0,1,18),linspace(0,1,36));
+        x=x(:);y=y(:);M=length(x);
+    end
+    recording{loop_count,2}=X;
+    recording{loop_count,3}=Y;
+    if display_flag
+        figure,
+        plot(recording{1,2}(:,1),recording{1,2}(:,2),'b+',recording{1,3}(:,1),recording{1,3}(:,2),'ro')
+        title(['original pointsets (nsamp1=' int2str(nsamp1) ', nsamp2=' ...
+        int2str(nsamp2) ')'])
+    if 0
+        h1=text(x1(:,1),x1(:,2),int2str((1:nsamp1)'));
+        h2=text(y2a(:,1),y2a(:,2),int2str((1:nsamp2)'));  
+        set(h2,'fontangle','italic');
+    end
+    drawnow
+    end
+%-----------以下取自tps_iter_match_1----------------start稍微修改
+    Xk=X; 
+    k=1;
+    s=1;
+    out_vec_1=zeros(1,nsamp1); 
+    out_vec_2=zeros(1,nsamp2);
+    disp(['iter=' int2str(k)])
+    [BH1,mean_dist_1]=sc_compute(Xk',zeros(1,nsamp1),mean_dist_global,nbins_theta,nbins_r,r_inner,r_outer,out_vec_1);
+    [BH2,mean_dist_2]=sc_compute(Y',zeros(1,nsamp2),mean_dist_1,nbins_theta,nbins_r,r_inner,r_outer,out_vec_2);
+    beta_k=(mean_dist_1^2)*beta_init*r^(k-1);
+    costmat=hist_cost_2(BH1,BH2);
+    nptsd=nsamp1+ndum1;
+    costmat2=eps_dum*ones(nptsd,nptsd);
+    costmat2(1:nsamp1,1:nsamp2)=costmat;
+    disp('running hungarian alg.')
+    cvec=hungarian(costmat2);
+    disp('done.')
+    [a,cvec2]=sort(cvec);
+    out_vec_1=cvec2(1:nsamp1)>nsamp2;
+    out_vec_2=cvec(1:nsamp2)>nsamp1;
+    X2=NaN*ones(nptsd,2);
+    X2(1:nsamp1,:)=Xk;
+    X2=X2(cvec,:);
+    X2b=NaN*ones(nptsd,2);
+    X2b(1:nsamp1,:)=X;
+    X2b=X2b(cvec,:);
+    Y2=NaN*ones(nptsd,2);
+    Y2(1:nsamp2,:)=Y;
+% extract coordinates of non-dummy correspondences and use them
+% to estimate transformation
+    ind_good=find(~isnan(X2b(1:nsamp1,1)));
+% NOTE: Gianluca said he had to change nsamp1 to nsamp2 in the
+% preceding line to get it to work properly when nsamp1~=nsamp2 and
+% both sides have outliers...
+    n_good=length(ind_good);
+    X3b=X2b(ind_good,:);
+    Y3=Y2(ind_good,:);
+% show the correspondences between the untransformed images
+
+    figure,
+    plot(recording{1,2}(:,1),recording{1,2}(:,2),'b+',recording{1,3}(:,1),recording{1,3}(:,2),'ro')
+    ind=cvec(ind_good);
+    hold on
+    plot([X2b(:,1) Y2(:,1)]',[X2b(:,2) Y2(:,2)]','k-')
+    hold off
+    title([int2str(n_good) ' correspondences (unwarped X)'])
+    drawnow	
+%-----------以下取自tps_iter_match_1----------------end
+%-----------------shape context----------end------------------
+
+%-------------------產生亂數及做轉換矩陣----------------------
+    Rand_seed=randperm(size(X2b(:,1),1))';
+    in_points = [X2b(Rand_seed(1),1) X2b(Rand_seed(1),2);X2b(Rand_seed(2),1) X2b(Rand_seed(2),2);X2b(Rand_seed(3),1) X2b(Rand_seed(3),2)];   
+    out_points = [Y2(Rand_seed(1),1) Y2(Rand_seed(1),2);Y2(Rand_seed(2),1) Y2(Rand_seed(2),2);Y2(Rand_seed(3),1) Y2(Rand_seed(3),2)];
+    tform2 = maketform('affine',in_points,out_points);%maketform=>製作轉換矩陣，tform2裡有T=轉換矩陣
+    recording{loop_count,1}=tform2.tdata.T;
+    for f=4:1:size(X2b(:,1),1)
+        mapping=[X2b(Rand_seed(f),1) X2b(Rand_seed(f),2) 1]*[tform2.tdata.T];
+        recording{loop_count,1}(Rand_seed(f),4)=mapping(1,1);%紀錄mapping的點座標
+        recording{loop_count,1}(Rand_seed(f),5)=mapping(1,2);
+        recording{loop_count,1}(Rand_seed(f),6)=sqrt((mapping(1,1)-Y2(Rand_seed(f),1))^2+(mapping(1,2)-Y2(Rand_seed(f),2))^2);%算與標準答案的差距
+    end
+    recording{loop_count,1}(Rand_seed(1),4)=Y2(Rand_seed(1),1);%紀錄mapping的點座標
+    recording{loop_count,1}(Rand_seed(1),5)=Y2(Rand_seed(1),2);
+    recording{loop_count,1}(Rand_seed(2),4)=Y2(Rand_seed(2),1);
+    recording{loop_count,1}(Rand_seed(2),5)=Y2(Rand_seed(2),2);
+    recording{loop_count,1}(Rand_seed(3),4)=Y2(Rand_seed(3),1);
+    recording{loop_count,1}(Rand_seed(3),5)=Y2(Rand_seed(3),2);
+    recording{loop_count,1}(5,1)=mean(recording{loop_count,1}(:,6));%計算每個平均差值
+    recording{loop_count,1}(:,7)=recording{loop_count,1}(:,6)<=threshold;%判斷距離相差是否再threshold裡，對的給1
+    
+    figure,plot(recording{1,2}(:,1),recording{1,2}(:,2),'b+',recording{1,3}(:,1),recording{1,3}(:,2),'ro') 
+    hold on;
+    %-------------點出第一個三角形-------------------
+    plot(X2b(Rand_seed(1,1),1),X2b(Rand_seed(1,1),2),'Rx')
+    plot(X2b(Rand_seed(2,1),1),X2b(Rand_seed(2,1),2),'Rx')
+    plot(X2b(Rand_seed(3,1),1),X2b(Rand_seed(3,1),2),'Rx')
+    
+    %------------用線畫出第一個三角形---------------
+    plot([X2b(Rand_seed(1,1),1) X2b(Rand_seed(2,1),1)]',[X2b(Rand_seed(1,1),2) X2b(Rand_seed(2,1),2)]','k-')
+    plot([X2b(Rand_seed(2,1),1) X2b(Rand_seed(3,1),1)]',[X2b(Rand_seed(2,1),2) X2b(Rand_seed(3,1),2)]','k-')
+    plot([X2b(Rand_seed(3,1),1) X2b(Rand_seed(1,1),1)]',[X2b(Rand_seed(3,1),2) X2b(Rand_seed(1,1),2)]','k-')
+    
+   
+    %----------------用線畫出第二個三角形-------------------
+    plot([Y2(Rand_seed(1,1),1) Y2(Rand_seed(2,1),1)]',[Y2(Rand_seed(1,1),2) Y2(Rand_seed(2,1),2)]','m--')
+    plot([Y2(Rand_seed(2,1),1) Y2(Rand_seed(3,1),1)]',[Y2(Rand_seed(2,1),2) Y2(Rand_seed(3,1),2)]','m--')
+    plot([Y2(Rand_seed(3,1),1) Y2(Rand_seed(1,1),1)]',[Y2(Rand_seed(3,1),2) Y2(Rand_seed(1,1),2)]','m--')
+    ,title(['mean=' num2str(recording{loop_count,1}(5,1)) ])
+    hold off;
+    
+    
+    %---------------在閥值內的畫綠線--------start----------------    
+    figure,
+    for n=1:1:size(Y2(:,1),1)
+        plot(recording{1,2}(:,1),recording{1,2}(:,2),'b+',recording{1,3}(:,1),recording{1,3}(:,2),'ro') 
+        hold on
+        if(recording{loop_count,1}(n,7)==1)
+            plot([X2b(n,1) recording{loop_count,1}(n,4)]',[X2b(n,2) recording{loop_count,1}(n,5)]','g-'),title(['threshold=' num2str(threshold) ]);
+            hold on
+        else
+            plot([X2b(n,1) recording{loop_count,1}(n,4)]',[X2b(n,2) recording{loop_count,1}(n,5)]','r-'),title(['threshold=' num2str(threshold)]);
+            hold on
+        end        
+    end    
+    hold off;  
+    
+    
+%--------------將voting後的點，認定是對的放在-------------------
+%------correct_point_set_X2b及correct_point_set_Y2-------------
+%---認定是錯的點放在Wrong_point_set_X2b及Wrong_point_set_Y2----- 
+    correct_count=1;
+    Wrong_count=1;
+    for j=1:1:size(recording{loop_count,1}(:,6),1)
+        if(recording{loop_count,1}(j,7)==1)
+            correct_point_set_X2b{loop_count,1}(correct_count,:)=X2b(j,:);
+            correct_point_set_Y2{loop_count,1}(correct_count,:)=Y2(j,:);
+            correct_count=correct_count+1;
+        else
+            Wrong_point_set_X2b{loop_count,1}(Wrong_count,:)=X2b(j,:);
+            Wrong_point_set_Y2{loop_count,1}(Wrong_count,:)=Y2(j,:);
+            Wrong_count=Wrong_count+1;
+        end
+    end
+
+    recording{loop_count,4}=X2b;
+    recording{loop_count,5}=Y2;
+    recording{loop_count,6}=correct_point_set_X2b{loop_count,1};
+    recording{loop_count,7}=correct_point_set_Y2{loop_count,1};
+    if()
+        x1=Wrong_point_set_X2b{loop_count,1};
+        y2a=Wrong_point_set_Y2{loop_count,1};
+    else
+        x1=[];
+        y2a=[];
+    end
+    loop_count=loop_count+1;
+
+end
+%------------------最後畫出全對的圖----------------
+figure,
+plot(recording{1,2}(:,1),recording{1,2}(:,2),'b+',recording{1,3}(:,1),recording{1,3}(:,2),'ro')
+hold on
+for i=1:1:size(recording,1)
+    plot([recording{i,6}(:,1) recording{i,7}(:,1)]',[recording{i,6}(:,2) recording{i,7}(:,2)]','g-')
+    hold on;
+end
+plot([x1(:,1) y2a(:,1)]',[x1(:,2) y2a(:,2)]','k-')
+hold off;
+    

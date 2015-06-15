@@ -1,3 +1,4 @@
+%要做shape context的兩張圖去做正規化，讓他們落在0~1之間
 clc;
 clear;
 close all;
@@ -5,7 +6,7 @@ select_point=98;
 Bounding_box=1;
 cut_row=28;  %有幾列，不是切幾刀
 cut_col=28;  %有幾行
-pic=imread('5762529972191233.tif');   %原圖
+pic=imread('5706803308396544.tif');   
 Long=size(pic,1);     %看影像有多長
 Wide=size(pic,2);     %看影像寬有多寬
 
@@ -181,12 +182,11 @@ save temp x1 y1;
 %-------------------pic2--------------------------------
 clc;
 clear;
-close all;
 select_point=98;
 Bounding_box=1;
 cut_row=28;  %有幾列，不是切幾刀
 cut_col=28;  %有幾行
-pic2=imread('5706803308396544.tif');
+pic2=imread('5762529972191233.tif');
 Long=size(pic2,1);     %看影像有多長
 Wide=size(pic2,2);     %看影像寬有多寬
 
@@ -359,4 +359,4 @@ figure,plot(regulate_pic2(:,1),regulate_pic2(:,2),'x'),axis equal,axis tight
 y2=regulate_pic2;
 y2a=regulate_pic2;
 load temp.mat
-save face_x_y2 y2 y2a x1 y1;
+save face_pic9_pic3 y2 y2a x1 y1;
