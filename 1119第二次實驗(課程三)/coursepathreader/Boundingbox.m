@@ -44,7 +44,7 @@ end
 
 originpic=9;%­ì¹Ï
 
-%figure,
+figure,
 for picnum=1:1:originpic-1
        sum=0;
     for i=1:1:size(rtmap,1)
@@ -54,9 +54,9 @@ for picnum=1:1:originpic-1
         end
     end
     fftdist(1,picnum)=sum;
-    %subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
+    subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
 end
-    %subplot(3,3,9),imshow(log(abs(fftshift(fmapq{9}))),[],'notruesize'),title('fft2');
+    subplot(3,3,9),imshow(log(abs(fftshift(fmapq{9}))),[],'notruesize'),title('fft2');
     fftdistsmaller=fftdist/10000
 
 

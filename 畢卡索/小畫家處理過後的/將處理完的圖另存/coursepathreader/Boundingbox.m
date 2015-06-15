@@ -18,7 +18,7 @@ for k=1:1:length(allFile)
     y_magnification=(Bounding_box-2)/(ymaximum-yminimum); %看ｙ要放大多少倍
     x_magnify=ceil(x*x_magnification);    %放大ｘ   用ceil是怕floor座標會有0值
     y_magnify =ceil(y*y_magnification);   %放大ｙ
-    %figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %show出ｐｌｏｔ
+    figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %show出ｐｌｏｔ
 
     for j=1:1:length(x_magnify)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
             rtmap(x_magnify(j,1),y_magnify(j,1))=1;
