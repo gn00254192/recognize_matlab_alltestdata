@@ -5,8 +5,9 @@ close all;
 % match two pointsets from Chui & Rangarajan
 
 % uncomment out one of these commands to load in some shape data
-%load face_pic9_pic3.mat
-load save_fish_def_3_1.mat
+load circle_pic9_pic3.mat
+%load Picasso_pic9_pic3.mat
+%load save_fish_def_3_1.mat
 %load face_x_y2.mat
 %load save_face_notresize.mat
 %load save_fish_noise_3_2.mat
@@ -49,7 +50,7 @@ end
 
 if display_flag
    figure(1)
-   plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro')
+   plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro'),axis tight
    title(['original pointsets (nsamp1=' int2str(nsamp1) ', nsamp2=' ...
        int2str(nsamp2) ')'])
    if 0
@@ -103,6 +104,7 @@ figure(2)
     ind=cvec(ind_good);
         hold on
     plot([X2b(:,1) Y2(:,1)]',[X2b(:,2) Y2(:,2)]','k-')
+    ,axis tight
         hold off
     title([int2str(n_good) ' correspondences (unwarped X)'])
 drawnow	
@@ -220,7 +222,7 @@ end
 
 if display_flag
    figure,
-   plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro')
+   plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro'),axis tight
    title(['original pointsets (nsamp1=' int2str(nsamp1) ', nsamp2=' ...
        int2str(nsamp2) ')'])
    if 0
@@ -267,7 +269,7 @@ figure,
      plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro')
     ind=cvec(ind_good);
         hold on
-    plot([X2b(:,1) Y2(:,1)]',[X2b(:,2) Y2(:,2)]','k-')
+    plot([X2b(:,1) Y2(:,1)]',[X2b(:,2) Y2(:,2)]','k-'),axis tight
         hold off
     title([int2str(n_good) ' correspondences (unwarped X)'])
 drawnow	
@@ -295,6 +297,7 @@ for f=1:1:size(Y2(:,1),1)
         corr_map(f,4)=0;
     end
 end
+,axis tight
 hold off;
 
 %畫出對的整張圖                        
@@ -310,8 +313,8 @@ for f=1:1:size(Y2(:,1),1)
         hold on;
     end
 end
+,axis tight,title(['total correct point=' num2str(sum(corr_map(:,4))+size(correct_point(:,1),1)) ])
 hold off
-
 
 
 

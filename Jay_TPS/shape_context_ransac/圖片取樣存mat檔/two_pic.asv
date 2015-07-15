@@ -3,10 +3,10 @@ clc;
 clear;
 close all;
 select_point=98;
-Bounding_box=1;
-cut_row=28;  %有幾列，不是切幾刀
-cut_col=28;  %有幾行
-pic=imread('5701241594183680.tif');   
+Bounding_box=0.8;
+cut_row=19;  %有幾列，不是切幾刀
+cut_col=19;  %有幾行
+pic=imread('6325587836665856.tif');   
 Long=size(pic,1);     %看影像有多長
 Wide=size(pic,2);     %看影像寬有多寬
 
@@ -178,15 +178,13 @@ figure,plot(regulate_pic(:,1),regulate_pic(:,2),'o'),axis equal,axis tight
 x1=regulate_pic;
 y1=regulate_pic;
 
+save data select_point Bounding_box cut_row cut_col
 save temp x1 y1;
 %-------------------pic2--------------------------------
 clc;
 clear;
-select_point=98;
-Bounding_box=1;
-cut_row=28;  %有幾列，不是切幾刀
-cut_col=28;  %有幾行
-pic2=imread('5762529972191233.tif');
+load data.mat
+pic2=imread('original.tif');
 Long=size(pic2,1);     %看影像有多長
 Wide=size(pic2,2);     %看影像寬有多寬
 
@@ -351,12 +349,12 @@ y_magnify =y1*y_magnification;   %放大ｙ
 
 size(x_y_merge)
 x_y_merge=[x_magnify,y_magnify];
-regulate_pic2(:,1)=x_y_merge(:,2)
-regulate_pic2(:,2)=-x_y_merge(:,1)
+regulate_pic2(:,1)=x_y_merge(:,2)+0.2
+regulate_pic2(:,2)=-x_y_merge(:,1)-0.2
 figure,plot(regulate_pic2(:,1),regulate_pic2(:,2),'x'),axis equal,axis tight
 
 
 y2=regulate_pic2;
 y2a=regulate_pic2;
 load temp.mat
-save face_pic9_pic1 y2 y2a x1 y1;
+save line_pic9_pic1 y2 y2a x1 y1;
