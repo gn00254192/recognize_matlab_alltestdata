@@ -1,7 +1,7 @@
 clc;
 clear;
 close all;
-Bounding_box=700;
+Bounding_box=500;
 allFile = dir('*.tif');
 for k=1:1:length(allFile)
     pic=imread(allFile(k).name);%對每一張tif圖片做處理
@@ -16,19 +16,36 @@ for k=1:1:length(allFile)
     y=y-yminimum+1;               %所有座標減去最小值,讓圖片可貼在(1,1)上
     x_magnification=(Bounding_box-2)/(xmaximum-xminimum); %看ｘ要放大多少倍 -2是為了怕ceil往上加一
     y_magnification=(Bounding_box-2)/(ymaximum-yminimum); %看ｙ要放大多少倍
-    x_magnify=ceil(x*x_magnification);    %放大ｘ   用ceil是怕floor座標會有0值
-    y_magnify =ceil(y*y_magnification);   %放大ｙ
-    figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %show出ｐｌｏｔ
+    x_magnify=floor(x*x_magnification);    %放大ｘ   用ceil是怕floor座標會有0值
+    y_magnify =floor(y*y_magnification);   %放大ｙ
+
+    if(k<7)
+        figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight,title([ num2str(k)])     %將所有點除去最遠距離，做大小正規化 
+    end
+        if(k==7)
+           figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight,title('原圖')
+       end
+    %figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %show出ｐｌｏｔ
 
     for j=1:1:length(x_magnify)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
+        if(x_magnify(j,1)==0&&y_magnify(j,1)~=0)
+            x_magnify(j,1)=1;
             rtmap(x_magnify(j,1),y_magnify(j,1))=1;
+        end
+        
+        if(x_magnify(j,1)~=0&&y_magnify(j,1)==0)
+            y_magnify(j,1)=1;
+            rtmap(x_magnify(j,1),y_magnify(j,1))=1;
+        end
+        if(x_magnify(j,1)~=0&&y_magnify(j,1)~=0) 
+            rtmap(x_magnify(j,1),y_magnify(j,1))=1;
+        end
     end
     %subplot(3,3,k),imshow(rtmap)     %show出放入空白矩陣圖片
     fmapq{k}=abs(fft2(rtmap));
     %figure,subplot(3,3,k),imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
     fmapq{k}= fmapq{k}/ fmapq{k}(1,1);
     fmapq{k}(1,1)=0;
-    %figure,imshow(rtmap)
 end
 
 originpic=7;%原圖
@@ -43,9 +60,10 @@ for picnum=1:1:originpic-1
         end
     end
     fftdist(1,picnum)=sum;
-    subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
+    subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title([ num2str(picnum)]);
 end
-    subplot(3,3,7),imshow(log(abs(fftshift(fmapq{7}))),[],'notruesize'),title('fft2');
-fftdistsmaller=fftdist/10000
+    subplot(3,3,7),imshow(log(abs(fftshift(fmapq{7}))),[],'notruesize'),title('原圖');
+    fftdistsmaller=fftdist/10000
+
 
 

@@ -17,8 +17,8 @@ for i=1:1:length(allFile)
     for j=1:1:length(THETA)
         rtmap(RHO(j),THETA(j))=rtmap(RHO(j),THETA(j))+1;
     end
-  %   figure,plot(A(:,2),A(:,1),'o'),axis equal,axis tight;
-    % imshow(rtmap)
+     figure,plot(A(:,2),A(:,1),'o'),axis equal,axis tight;
+    imshow(rtmap)
     fclose(fid);
     fmapq{i}=abs(fft2(rtmap));
     fmapq{i}= fmapq{i}/ fmapq{i}(1,1);

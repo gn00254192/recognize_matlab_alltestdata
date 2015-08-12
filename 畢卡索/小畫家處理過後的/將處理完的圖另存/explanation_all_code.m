@@ -91,9 +91,9 @@ for picnum=1:1:originpic-1
         end
     end
     fftdist(1,picnum)=sum;
-    subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
+    subplot(3,3,picnum),imshow(log(1+abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
 end
-    subplot(3,3,7),imshow(log(abs(fftshift(fmapq{7}))),[],'notruesize'),title('fft2');
+    subplot(3,3,7),imshow(log(1+abs(fftshift(fmapq{7}))),[],'notruesize'),title('fft2');
 fftdistsmaller=fftdist/10000
 
 

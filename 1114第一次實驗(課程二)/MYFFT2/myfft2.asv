@@ -25,16 +25,23 @@ for i=1:1:length(allFile)
     fmapq{i}(1,1)=0;
      fmapq{i}= fmapq{i}(1:4,1:6);
 end
-sum=0;
 
-for picnum=1:1:8
-for i=1:1:4
-    for j=1:1:6
-        temp=sqrt((fmapq{1,picnum}(i,j)-fmapq{1,9}(i,j))* (fmapq{1,picnum}(i,j)-fmapq{1,9}(i,j)));
-        sum=temp+sum;
+originpic=9;%­ì¹Ï
+
+for picnum=1:1:originpic-1
+       sum=0;
+    for i=1:1:4
+        for j=1:1:6
+            Disp2o=sqrt((fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j))* (fmapq{1,picnum}(i,j)-fmapq{1,originpic}(i,j)));
+            sum=Disp2o+sum;
+        end
     end
+    distance(1,picnum)=sum;
 end
-end
+
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 clc;
 clear;
 close all;
-Bounding_box=700;
+Bounding_box=500;
 allFile = dir('*.tif');
 for k=1:1:length(allFile)
     pic=imread(allFile(k).name);%對每一張tif圖片做處理
@@ -19,6 +19,12 @@ for k=1:1:length(allFile)
     x_magnify=floor(x*x_magnification);    %放大ｘ   用ceil是怕floor座標會有0值
     y_magnify =floor(y*y_magnification);   %放大ｙ
 
+    if(k<9)
+        subplot(3,3,k),plot(y_magnify,-x_magnify,'x'),axis equal,axis tight,title([ num2str(k)])     %將所有點除去最遠距離，做大小正規化 
+    end
+        if(k==9)
+           subplot(3,3,k),plot(y_magnify,-x_magnify,'x'),axis equal,axis tight,title('原圖')
+       end
     %figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %show出ｐｌｏｔ
 
     for j=1:1:length(x_magnify)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
@@ -54,9 +60,9 @@ for picnum=1:1:originpic-1
         end
     end
     fftdist(1,picnum)=sum;
-    subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
+    subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title([ num2str(picnum)]);
 end
-    subplot(3,3,9),imshow(log(abs(fftshift(fmapq{9}))),[],'notruesize'),title('fft2');
+    subplot(3,3,9),imshow(log(abs(fftshift(fmapq{9}))),[],'notruesize'),title('原圖');
     fftdistsmaller=fftdist/10000
 
 

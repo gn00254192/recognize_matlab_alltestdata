@@ -13,7 +13,7 @@ close all;
 %load save_face.mat
 %load save_face_ttttt.mat
 %load save_face_notdo_anything.mat
-load save_face_two_diff_pic.mat
+load face_pic9_pic2.mat
 X=x1;
 Y=y2a;
 
@@ -98,7 +98,7 @@ figure(3)
     plot(X(:,1),X(:,2),'b+',Y(:,1),Y(:,2),'ro')
     ind=cvec(ind_good);
         hold on
-    plot([X2b(:,1) Y2(:,1)]',[X2b(:,2) Y2(:,2)]','k-')
+    plot([X2b(:,1) Y2(:,1)]',[X2b(:,2) Y2(:,2)]','k-'),axis tight
         hold off
     title([int2str(n_good) ' correspondences (unwarped X)'])
 drawnow	

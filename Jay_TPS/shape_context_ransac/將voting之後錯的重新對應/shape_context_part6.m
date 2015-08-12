@@ -5,7 +5,7 @@ close all;
 % match two pointsets from Chui & Rangarajan
 
 % uncomment out one of these commands to load in some shape data
-load Pica_pic9_pic6.mat
+load face_pic9_pic2.mat
 %load save_fish_def_3_1.mat
 %load face_x_y2.mat
 %load save_face_notresize.mat
@@ -449,6 +449,11 @@ for i=1:1:size(All_correct_point,1)
     cp2tform_map(i,1)=mapping(1,1);
     cp2tform_map(i,2)=mapping(1,2);
 end
+figure,plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro')
+ind=cvec(ind_good);
+hold on                        
+plot([All_correct_point(:,5) All_correct_point(:,7)]',[All_correct_point(:,6) All_correct_point(:,8)]','k-'),axis tight
+hold off
 
 %figure,plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro')
 %ind=cvec(ind_good);
@@ -465,6 +470,7 @@ for i=1:1:size(All_correct_point,1)
 end
 
 
-
+figure,plot(x1(:,1),x1(:,2),'b+',y2a(:,1),y2a(:,2),'ro')
+ind=cvec(ind_good);
 pic_dis=(((200-size(All_correct_point,1))*0.1)+dis_sum)/98;
 end

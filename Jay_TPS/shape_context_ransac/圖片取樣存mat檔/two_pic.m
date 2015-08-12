@@ -2,7 +2,7 @@
 clc;
 clear;
 close all;
-select_point=200;
+select_point=500;
 Bounding_box=0.8;
 cut_row=20;  %有幾列，不是切幾刀
 cut_col=20;  %有幾行

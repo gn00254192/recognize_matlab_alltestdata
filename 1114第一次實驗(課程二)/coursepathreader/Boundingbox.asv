@@ -1,9 +1,7 @@
 clc;
 clear;
 close all;
-add_temp=1;
-for Bounding_box=100:100:500;
-sight_like=5;
+Bounding_box=500;
 allFile = dir('*.tif');
 for k=1:1:length(allFile)
     pic=imread(allFile(k).name);%對每一張tif圖片做處理
@@ -21,7 +19,12 @@ for k=1:1:length(allFile)
     x_magnify=floor(x*x_magnification);    %放大ｘ   用ceil是怕floor座標會有0值
     y_magnify =floor(y*y_magnification);   %放大ｙ
 
-    %figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %show出ｐｌｏｔ
+    
+        subplot(3,3,k),plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %將所有點除去最遠距離，做大小正規化 
+       if(k==9)
+           figure,plot(_magnify,-x_magnify,'x'),axis equal,axis tight
+       end
+    figure,plot(y_magnify,-x_magnify,'x'),axis equal,axis tight     %show出ｐｌｏｔ
 
     for j=1:1:length(x_magnify)            %把相對應X,Y軸寫進rtmap裡,以便做二維傅立葉
         if(x_magnify(j,1)==0&&y_magnify(j,1)~=0)
@@ -37,7 +40,7 @@ for k=1:1:length(allFile)
             rtmap(x_magnify(j,1),y_magnify(j,1))=1;
         end
     end
-    subplot(3,3,k),imshow(rtmap)     %show出放入空白矩陣圖片
+    %subplot(3,3,k),imshow(rtmap)     %show出放入空白矩陣圖片
     fmapq{k}=abs(fft2(rtmap));
     %figure,subplot(3,3,k),imshow(abs(log(abs(fmapq{i}))),[],'notruesize'),title('fft2');
     fmapq{k}= fmapq{k}/ fmapq{k}(1,1);
@@ -59,30 +62,7 @@ for picnum=1:1:originpic-1
     subplot(3,3,picnum),imshow(log(abs(fftshift(fmapq{picnum}))),[],'notruesize'),title('fft2');
 end
     subplot(3,3,9),imshow(log(abs(fftshift(fmapq{9}))),[],'notruesize'),title('fft2');
-  
-    %fftdistsmaller(add_temp,:)=fftdist/10000   %所有圖的距離算出
-    %sorted(add_temp,:) = sort(fftdistsmaller(add_temp,:))  %將所有距離排序~存在sort裡
-    
     fftdistsmaller=fftdist/10000
-    sorted = sort(fftdistsmaller)
-    add_temp=add_temp+1;
-
-
-%----------------------------視覺化數據----------------------------------------------
-%1.我覺得像的是裡面第幾張圖
-%2.取出那一張的距離數據
-%3.找他在sort裡的索引
-%將索引值存下,接下來跑當bouding=100,200,300.....1000時的狀況
-%plot出來
-
-
-like_value=fftdistsmaller(sight_like);%2.取出那一張的距離數據
-like_final_sort_index(Bounding_box/100)=find(sorted==(like_value));%3.找他在sort裡的索引
-
-end
-
-
-
 
 
 
