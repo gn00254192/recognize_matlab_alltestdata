@@ -5,7 +5,7 @@ close all;
 % match two pointsets from Chui & Rangarajan
 
 % uncomment out one of these commands to load in some shape data
-load circle_pic9_pic8.mat
+load line_pic9_pic1.mat
 %load save_fish_def_3_1.mat
 %load face_x_y2.mat
 %load save_face_notresize.mat

@@ -4,9 +4,9 @@ clear;
 close all;
 select_point=300;
 Bounding_box=0.8;
-cut_row=20;  %有幾列，不是切幾刀
-cut_col=20;  %有幾行
-pic=imread('pic_part6.tif');   
+cut_row=100;  %有幾列，不是切幾刀
+cut_col=100;  %有幾行
+pic=imread('5762529972191232.tif');   
 Long=size(pic,1);     %看影像有多長
 Wide=size(pic,2);     %看影像寬有多寬
 
@@ -184,7 +184,7 @@ save temp x1 y1;
 clc;
 clear;
 load data.mat
-pic2=imread('qorigin_pic.tif');
+pic2=imread('5762529972191233.tif');
 Long=size(pic2,1);     %看影像有多長
 Wide=size(pic2,2);     %看影像寬有多寬
 
@@ -357,4 +357,8 @@ figure,plot(regulate_pic2(:,1),regulate_pic2(:,2),'x'),axis equal,axis tight
 y2=regulate_pic2;
 y2a=regulate_pic2;
 load temp.mat
-save Pica_pic9_pic6 y2 y2a x1 y1;
+save face_pic9_pic8 y2 y2a x1 y1;
+
+
+figure,plot(regulate_pic2(:,1),regulate_pic2(:,2),'x'),axis equal,axis tight
+

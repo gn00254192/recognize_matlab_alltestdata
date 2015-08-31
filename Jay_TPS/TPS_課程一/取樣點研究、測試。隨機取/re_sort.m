@@ -3,8 +3,8 @@ clear;
 close all;
 select_point=300;
 Bounding_box=500;
-cut_row=108;  %有幾列，不是切幾刀
-cut_col=108;  %有幾行
+cut_row=100;  %有幾列，不是切幾刀
+cut_col=100;  %有幾行
 allFile = dir('*.tif');
 for kp=1:1:length(allFile)
     pic=imread(allFile(kp).name);

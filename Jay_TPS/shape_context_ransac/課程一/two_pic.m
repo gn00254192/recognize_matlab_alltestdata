@@ -358,3 +358,10 @@ y2=regulate_pic2;
 y2a=regulate_pic2;
 load temp.mat
 save face_pic9_pic8 y2 y2a x1 y1;
+
+hold off;
+figure,plot(y2(:,1),y2(:,2),'x'),axis equal,axis tight
+hold on;
+plot(x1(:,1),x1(:,2),'o'),axis equal,axis tight
+hold off;
+
